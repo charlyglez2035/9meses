@@ -1,46 +1,52 @@
-import { neon } from "@neondatabase/serverless";
+import { neon } from '@neondatabase/serverless';
 
 const sql = neon(process.env.DATABASE_URL);
 
 export default async function handler(req, res) {
 
+  // GET cartas
+  if (req.method === 'GET') {
+    try {
+      const letters = await sql`
+        SELECT * FROM letters
+        ORDER BY created_at DESC
+      `;
+
+      return res.status(200).json(letters);
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // POST carta nueva
+  if (req.method === 'POST') {
     try {
 
-        // GET
-        if (req.method === "GET") {
+      const { title, content } = req.body;
 
-            const letters = await sql`
-                SELECT *
-                FROM letters
-                ORDER BY created_at DESC
-            `;
-
-            return res.status(200).json(letters);
-        }
-
-        // POST
-        if (req.method === "POST") {
-
-            const { title, content } = req.body;
-
-            await sql`
-                INSERT INTO letters (title, content)
-                VALUES (${title}, ${content})
-            `;
-
-            return res.status(200).json({
-                success: true
-            });
-        }
-
-        return res.status(405).json({
-            error: "Method not allowed"
+      if (!title || !content) {
+        return res.status(400).json({
+          error: 'Faltan datos'
         });
+      }
 
-    } catch (error) {
+      const result = await sql`
+        INSERT INTO letters (title, content)
+        VALUES (${title}, ${content})
+        RETURNING *
+      `;
 
-        return res.status(500).json({
-            error: error.message
-        });
+      return res.status(200).json(result[0]);
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: err.message });
     }
+  }
+
+  return res.status(405).json({
+    error: 'Method not allowed'
+  });
 }
