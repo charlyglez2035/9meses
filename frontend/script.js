@@ -593,10 +593,30 @@ function gameOver() {
 }
 
 document.addEventListener('keydown', e => {
+
+  const active = document.activeElement;
+
+  const typing =
+    active.tagName === 'INPUT' ||
+    active.tagName === 'TEXTAREA';
+
+  // si estás escribiendo, NO bloquear teclas
+  if (typing) return;
+
   keys[e.key] = true;
-  if (e.key === ' ') e.preventDefault();
+
+  // evitar scroll con espacio en el juego
+  if (e.key === ' ') {
+    e.preventDefault();
+  }
+
 });
-document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+document.addEventListener('keyup', e => {
+
+  keys[e.key] = false;
+
+});
 
 // Mobile touch controls
 const cw = document.getElementById('gameCanvas');
