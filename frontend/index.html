@@ -335,15 +335,21 @@
 
   .btn-primary:hover { transform: scale(1.04); opacity: 0.9; }
 
-  .letters-list { display: flex; flex-direction: column; gap: 16px; }
+.letters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 30px;
+}
 
-  .letter-card {
-    background: var(--card);
-    border-radius: 16px;
-    padding: 22px 24px;
-    border: 1px solid rgba(255,107,157,0.2);
-    position: relative;
-  }
+.letter-card {
+  display: block;
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 20px;
+}
 
   .letter-card-header {
     display: flex;
