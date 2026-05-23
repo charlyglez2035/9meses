@@ -800,15 +800,26 @@ function renderLetters() {
 
     div.className = 'letter-card';
 
-    div.innerHTML = `
+div.innerHTML = `
+  <div class="letter-header">
+
+    <div>
       <h3>${letter.title}</h3>
 
       <small>
         ${new Date(letter.created_at).toLocaleDateString('es-MX')}
       </small>
+    </div>
 
-      <pre class="letter-text">${letter.content}</pre>
-    `;
+    <button class="delete-letter-btn"
+      onclick="deleteLetter(${letter.id})">
+      ✖
+    </button>
+
+  </div>
+
+  <pre class="letter-text">${letter.content}</pre>
+`;
 
     list.appendChild(div);
 
@@ -816,3 +827,20 @@ function renderLetters() {
 }
 
 loadLetters();
+
+async function deleteLetter(id) {
+
+  try {
+
+    await fetch('/api/letters?id=' + id, {
+      method: 'DELETE'
+    });
+
+    loadLetters();
+
+  } catch (err) {
+
+    console.error(err);
+
+  }
+}

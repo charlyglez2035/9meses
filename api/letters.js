@@ -33,6 +33,20 @@ export default async function handler(req, res) {
     return res.status(200).json(result[0]);
   }
 
+  if (req.method === 'DELETE') {
+
+  const { id } = req.query;
+
+  await sql`
+    DELETE FROM letters
+    WHERE id = ${id}
+  `;
+
+  return res.status(200).json({
+    success: true
+  });
+}
+
   return res.status(405).json({
     error: 'Método no permitido'
   });
