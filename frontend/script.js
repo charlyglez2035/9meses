@@ -706,33 +706,51 @@ async function loadLetters() {
 async function saveLetter() {
 
   const title = document.getElementById('letterTitle').value.trim();
+
+  // IMPORTANTE:
+  // NO usar trim() aquí para no destruir saltos de línea
   const body = document.getElementById('letterBody').value;
 
+  // Solo validamos usando trim()
   if (!title || !body.trim()) {
+
     alert('¡Escribe un título y el contenido de la carta! 💛');
+
     return;
   }
 
   try {
 
-    await fetch('/api/letters', {
+    const response = await fetch('/api/letters', {
+
       method: 'POST',
+
       headers: {
         'Content-Type': 'application/json'
       },
+
       body: JSON.stringify({
         title: title,
         content: body
       })
+
     });
 
+    const data = await response.json();
+
+    console.log('Carta guardada:', data);
+
+    // limpiar inputs
     document.getElementById('letterTitle').value = '';
     document.getElementById('letterBody').value = '';
 
-    loadLetters();
+    // recargar cartas
+    await loadLetters();
 
   } catch (err) {
-    console.error(err);
+
+    console.error('Error guardando carta:', err);
+
   }
 }
 
