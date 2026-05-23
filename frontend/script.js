@@ -41,3 +41,12 @@ async function loadLetters() {
     }
 }
 
+// ===== MUSIC =====
+const bgMusic = document.getElementById('bgMusic');
+
+document.addEventListener('click', () => {
+  if (bgMusic.paused) {
+    bgMusic.volume = 0.35;
+    bgMusic.play().catch(() => {});
+  }
+}, { once: true });
