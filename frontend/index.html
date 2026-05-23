@@ -615,76 +615,132 @@ function showSection(id) {
   });
 }
 
-// ====== PHOTO GALLERY ======
-let photos = JSON.parse(localStorage.getItem('couple_photos') || '[]');
+// ====== CLOUDINARY PHOTOS ======
 
-function renderGallery() {
-  const grid = document.getElementById('galleryGrid');
-  const empty = document.getElementById('emptyGallery');
-  grid.innerHTML = '';
-  if (photos.length === 0) {
-    grid.appendChild(Object.assign(document.createElement('div'), {
-      className: 'empty-state',
-      style: 'grid-column:1/-1',
-      innerHTML: '<div class="icon">🌸</div><p>Aquí aparecerán sus recuerdos</p>'
-    }));
-    return;
-  }
-  photos.forEach((src, idx) => {
-    const item = document.createElement('div');
-    item.className = 'gallery-item';
-    item.innerHTML = `<img src="${src}" alt="Recuerdo"><button class="delete-btn" onclick="deletePhoto(${idx})">✕</button>`;
-    grid.appendChild(item);
-  });
+async function uploadPhotos(files) {
+
+    for (const file of files) {
+
+        const reader = new FileReader();
+
+        reader.onload = async function(e) {
+
+            try {
+
+                await fetch('/api/photos', {
+
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        image: e.target.result
+                    })
+
+                });
+
+                loadPhotos();
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert('Error subiendo foto 😭');
+            }
+
+        };
+
+        reader.readAsDataURL(file);
+    }
 }
 
-function deletePhoto(idx) {
-  photos.splice(idx, 1);
-  localStorage.setItem('couple_photos', JSON.stringify(photos));
-  renderGallery();
+
+async function loadPhotos() {
+
+    try {
+
+        const response = await fetch('/api/photos');
+
+        const photos = await response.json();
+
+        const gallery = document.getElementById('galleryGrid');
+
+        gallery.innerHTML = '';
+
+        if (photos.length === 0) {
+
+            gallery.innerHTML = `
+                <div class="empty-state" id="emptyGallery" style="grid-column:1/-1">
+                    <div class="icon">🌸</div>
+                    <p>Aquí aparecerán sus recuerdos</p>
+                </div>
+            `;
+
+            return;
+        }
+
+        photos.forEach(photo => {
+
+            const card = document.createElement('div');
+
+            card.className = 'gallery-item';
+
+            card.innerHTML = `
+                <img src="${photo.secure_url}" alt="Recuerdo">
+            `;
+
+            gallery.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+    }
 }
 
-document.getElementById('fileInput').addEventListener('change', (e) => {
-  const files = Array.from(e.target.files);
-  let loaded = 0;
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      photos.push(ev.target.result);
-      loaded++;
-      if (loaded === files.length) {
-        localStorage.setItem('couple_photos', JSON.stringify(photos));
-        renderGallery();
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-  e.target.value = '';
+
+document.getElementById('fileInput')
+.addEventListener('change', (e) => {
+
+    uploadPhotos(e.target.files);
+
 });
+
 
 const dz = document.getElementById('dropZone');
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor = '#FFD700'; });
-dz.addEventListener('dragleave', () => { dz.style.borderColor = 'rgba(255,215,0,0.4)'; });
-dz.addEventListener('drop', e => {
-  e.preventDefault();
-  dz.style.borderColor = 'rgba(255,215,0,0.4)';
-  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-  let loaded = 0;
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = ev => {
-      photos.push(ev.target.result);
-      loaded++;
-      if (loaded === files.length) {
-        localStorage.setItem('couple_photos', JSON.stringify(photos));
-        renderGallery();
-      }
-    };
-    reader.readAsDataURL(file);
-  });
+
+dz.addEventListener('dragover', e => {
+
+    e.preventDefault();
+
+    dz.style.borderColor = '#FFD700';
+
 });
 
-renderGallery();
+dz.addEventListener('dragleave', () => {
+
+    dz.style.borderColor = 'rgba(255,215,0,0.4)';
+
+});
+
+dz.addEventListener('drop', e => {
+
+    e.preventDefault();
+
+    dz.style.borderColor = 'rgba(255,215,0,0.4)';
+
+    const files = Array.from(e.dataTransfer.files)
+    .filter(f => f.type.startsWith('image/'));
+
+    uploadPhotos(files);
+
+});
+
+
+loadPhotos();
 
 // ====== LETTERS DATABASE ======
 
