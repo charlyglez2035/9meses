@@ -148,59 +148,99 @@ dz.addEventListener('drop', e => {
 
 loadPhotos();
 
+```javascript
 // ====== LETTERS ======
+
 let lettersData = [];
 
 async function loadLetters() {
+
   try {
+
     const res = await fetch('/api/letters');
+
     lettersData = await res.json();
+
+    console.log('Cartas cargadas:', lettersData);
+
     renderLetters();
+
   } catch (err) {
-    console.error(err);
+
+    console.error('Error cargando cartas:', err);
+
   }
 }
 
 async function saveLetter() {
+
   const title = document.getElementById('letterTitle').value.trim();
+
   const body = document.getElementById('letterBody').value.trim();
 
   if (!title || !body) {
+
     alert('¡Escribe un título y el contenido de la carta! 💛');
+
     return;
   }
 
-  await fetch('/api/letters', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      title,
-      content: body
-    })
-  });
+  try {
 
-  document.getElementById('letterTitle').value = '';
-  document.getElementById('letterBody').value = '';
+    const res = await fetch('/api/letters', {
 
-  loadLetters();
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify({
+        title: title,
+        content: body
+      })
+
+    });
+
+    const data = await res.json();
+
+    console.log('Carta guardada:', data);
+
+    document.getElementById('letterTitle').value = '';
+
+    document.getElementById('letterBody').value = '';
+
+    await loadLetters();
+
+  } catch (err) {
+
+    console.error('Error guardando carta:', err);
+
+  }
 }
 
 function renderLetters() {
+
   const list = document.getElementById('lettersList');
 
-  if (!list) return;
+  if (!list) {
+
+    console.log('NO EXISTE lettersList');
+
+    return;
+  }
 
   list.innerHTML = '';
 
-  if (lettersData.length === 0) {
+  if (!Array.isArray(lettersData) || lettersData.length === 0) {
+
     list.innerHTML = `
       <div class="empty-state">
         <div class="icon">✉️</div>
         <p>Aún no hay cartas. ¡Escribe la primera!</p>
       </div>
     `;
+
     return;
   }
 
@@ -211,20 +251,33 @@ function renderLetters() {
     div.className = 'letter-card';
 
     div.innerHTML = `
-      <h3>${letter.title}</h3>
+      <div class="letter-card-header">
 
-      <small>
-        ${new Date(letter.created_at).toLocaleDateString('es-MX')}
-      </small>
+        <div>
+          <h3>${letter.title}</h3>
+
+          <div class="date">
+            ${new Date(letter.created_at).toLocaleDateString('es-MX')}
+          </div>
+        </div>
+
+      </div>
 
       <p>${letter.content.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p>
     `;
 
     list.appendChild(div);
+
   });
 }
 
-loadLetters();
+window.addEventListener('DOMContentLoaded', () => {
+
+  loadLetters();
+
+});
+```
+
 
 // ====== GRU vs MINIONS GAME ======
 const canvas = document.getElementById('gameCanvas');
