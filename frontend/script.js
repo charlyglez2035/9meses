@@ -22,3 +22,22 @@ async function saveLetter(title, content) {
         console.error(error);
     }
 }
+
+async function loadLetters() {
+
+    try {
+
+        const response = await fetch("/api/letters");
+
+        const letters = await response.json();
+
+        console.log(letters);
+
+        return letters;
+
+    } catch (error) {
+
+        console.error(error);
+    }
+}
+
