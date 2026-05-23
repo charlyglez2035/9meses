@@ -343,12 +343,13 @@
 }
 
 .letter-card {
-  display: block;
-  width: 100%;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(20, 20, 60, 0.9);
+  border: 1px solid rgba(255, 105, 180, 0.2);
   border-radius: 20px;
   padding: 20px;
+  margin-top: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
   .letter-card-header {
@@ -509,18 +510,57 @@
     opacity: 0;
   }
 
-  .letter-header {
+.letter-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 12px;
 }
+
+.letter-header h3 {
+  color: #ff8fb8;
+  margin-bottom: 4px;
+  font-size: 1.3rem;
+}
+
+.letter-header small {
+  color: #d4d8f0;
+  opacity: 0.8;
+}
+
 
 .delete-letter-btn {
   background: transparent;
   border: none;
   color: #ff8fb8;
-  font-size: 18px;
+  font-size: 22px;
   cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.delete-letter-btn:hover {
+  color: #ff4f8b;
+  transform: scale(1.15);
+}
+.letter-text::-webkit-scrollbar {
+  width: 6px;
+}
+
+.letter-text::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+}
+
+.letter-text {
+  margin-top: 16px;
+  color: #f4f4ff;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  font-family: inherit;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
   @keyframes riseUp {
