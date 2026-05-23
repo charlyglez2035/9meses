@@ -787,9 +787,7 @@ function renderLetters() {
         ${new Date(letter.created_at).toLocaleDateString('es-MX')}
       </small>
 
-      <p style="white-space: pre-wrap;">
-        ${letter.content}
-      </p>
+      <pre class="letter-text">${letter.content}</pre>
     `;
 
     list.appendChild(div);
