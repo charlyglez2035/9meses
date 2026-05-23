@@ -13,14 +13,20 @@ for (let i = 0; i < 12; i++) {
 }
 
 // ====== NAVIGATION ======
-function showSection(id) {
-  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav button').forEach((b, i) => {
-    b.classList.toggle('active', ['photos','letters','game-section'][i] === id);
-  });
-}
+function showSection(sectionId) {
 
+    document.querySelectorAll('section').forEach(section => {
+        section.classList.remove('active');
+    });
+
+    document.getElementById(sectionId)
+    .classList.add('active');
+
+    document.querySelectorAll('nav button')
+    .forEach(btn => btn.classList.remove('active'));
+
+    event.target.classList.add('active');
+}
 // ====== CLOUDINARY PHOTOS ======
 async function uploadPhotos(files) {
 
@@ -708,32 +714,6 @@ async function loadLetters() {
     }
 }
 
-// ===== MUSIC =====
-const bgMusic = document.getElementById('bgMusic');
-
-document.addEventListener('click', () => {
-  if (bgMusic.paused) {
-    bgMusic.volume = 0.35;
-    bgMusic.play().catch(() => {});
-  }
-}, { once: true });
-
-// Start idle render
-loop();
-
-// ===== MUSIC =====
-window.addEventListener('load', () => {
-  const music = document.getElementById('bgMusic');
-
-  document.body.addEventListener('click', async () => {
-    try {
-      music.volume = 0.35;
-      await music.play();
-    } catch (err) {
-      console.log(err);
-    }
-  }, { once: true });
-});
 
 // ====== LETTERS ======
 let lettersData = [];
@@ -875,16 +855,17 @@ async function deleteLetter(id) {
   }
 }
 
+// ===== MUSIC =====
+
 const bgMusic = document.getElementById('bgMusic');
 
 document.addEventListener('click', () => {
 
   if (bgMusic.paused) {
 
-    bgMusic.volume = 0.3;
+    bgMusic.volume = 0.35;
 
-    bgMusic.play();
-
+    bgMusic.play().catch(() => {});
   }
 
 }, { once: true });
@@ -892,19 +873,21 @@ document.addEventListener('click', () => {
 
 const musicToggle = document.getElementById('musicToggle');
 
-musicToggle.addEventListener('click', () => {
+if (musicToggle) {
 
-  if (bgMusic.paused) {
+  musicToggle.addEventListener('click', () => {
 
-    bgMusic.play();
+    if (bgMusic.paused) {
 
-    musicToggle.innerHTML = '⏸️ Pausar Música';
+      bgMusic.play();
 
-  } else {
+      musicToggle.innerHTML = '⏸️ Pausar Música';
 
-    bgMusic.pause();
+    } else {
 
-    musicToggle.innerHTML = '▶️ Reproducir Música';
-  }
+      bgMusic.pause();
 
-});
+      musicToggle.innerHTML = '▶️ Reproducir Música';
+    }
+  });
+}
