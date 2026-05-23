@@ -839,3 +839,37 @@ async function deleteLetter(id) {
 
   }
 }
+
+const bgMusic = document.getElementById('bgMusic');
+
+document.addEventListener('click', () => {
+
+  if (bgMusic.paused) {
+
+    bgMusic.volume = 0.3;
+
+    bgMusic.play();
+
+  }
+
+}, { once: true });
+
+
+const musicToggle = document.getElementById('musicToggle');
+
+musicToggle.addEventListener('click', () => {
+
+  if (bgMusic.paused) {
+
+    bgMusic.play();
+
+    musicToggle.innerHTML = '⏸️ Pausar Música';
+
+  } else {
+
+    bgMusic.pause();
+
+    musicToggle.innerHTML = '▶️ Reproducir Música';
+  }
+
+});
