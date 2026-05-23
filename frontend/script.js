@@ -190,12 +190,14 @@ async function saveLetter() {
 function renderLetters() {
   const list = document.getElementById('lettersList');
 
+  if (!list) return;
+
   list.innerHTML = '';
 
-  if (!lettersData.length) {
+  if (lettersData.length === 0) {
     list.innerHTML = `
       <div class="empty-state">
-        <div class="icon">💌</div>
+        <div class="icon">✉️</div>
         <p>Aún no hay cartas. ¡Escribe la primera!</p>
       </div>
     `;
@@ -203,13 +205,18 @@ function renderLetters() {
   }
 
   lettersData.forEach((letter) => {
+
     const div = document.createElement('div');
 
     div.className = 'letter-card';
 
     div.innerHTML = `
       <h3>${letter.title}</h3>
-      <small>${new Date(letter.created_at).toLocaleDateString()}</small>
+
+      <small>
+        ${new Date(letter.created_at).toLocaleDateString('es-MX')}
+      </small>
+
       <p>${letter.content.replace(/(?:\r\n|\r|\n)/g, '<br>')}</p>
     `;
 
