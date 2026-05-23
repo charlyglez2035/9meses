@@ -804,7 +804,7 @@ function renderLetters() {
     div.innerHTML = `
       <h3>${letter.title}</h3>
       <small>${new Date(letter.created_at).toLocaleDateString()}</small>
-      <p>${letter.content}</p>
+      <p>${letter.content.replace(/\n/g, '<br>')}</p>
     `;
 
     list.appendChild(div);
