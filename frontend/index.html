@@ -805,7 +805,7 @@ async function loadLetters() {
 
     list.innerHTML = '';
 
-    if (letters.length === 0) {
+    if (lettersData.length === 0) {
 
       list.innerHTML = `
         <div class="empty-state">
@@ -817,7 +817,7 @@ async function loadLetters() {
       return;
     }
 
-    letters.forEach((l) => {
+    lettersData.forEach((l) => {
 
       const card = document.createElement('div');
 
@@ -875,11 +875,11 @@ function deleteLetter(idx) {
 function renderLetters() {
   const list = document.getElementById('lettersList');
   list.innerHTML = '';
-  if (letters.length === 0) {
+  if (lettersData.length === 0) {
     list.innerHTML = '<div class="empty-state"><div class="icon">✉️</div><p>Aún no hay cartas. ¡Escribe la primera!</p></div>';
     return;
   }
-  letters.forEach((l, i) => {
+  lettersData.forEach((l, i) => {
     const card = document.createElement('div');
     card.className = 'letter-card';
     card.innerHTML = `
