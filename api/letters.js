@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
     try {
 
-        // OBTENER CARTAS
+        // GET
         if (req.method === "GET") {
 
             const letters = await sql`
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
             return res.status(200).json(letters);
         }
 
-        // CREAR CARTA
+        // POST
         if (req.method === "POST") {
 
             const { title, content } = req.body;

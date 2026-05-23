@@ -686,19 +686,127 @@ dz.addEventListener('drop', e => {
 
 renderGallery();
 
-// ====== LETTERS ======
-let letters = JSON.parse(localStorage.getItem('couple_letters') || '[]');
+// ====== LETTERS DATABASE ======
 
-function saveLetter() {
+async function saveLetter() {
+
   const title = document.getElementById('letterTitle').value.trim();
+
   const body = document.getElementById('letterBody').value.trim();
-  if (!title || !body) { alert('¡Escribe un título y el contenido de la carta! 💛'); return; }
-  letters.unshift({ title, body, date: new Date().toLocaleDateString('es-MX', { year:'numeric', month:'long', day:'numeric' }) });
-  localStorage.setItem('couple_letters', JSON.stringify(letters));
-  document.getElementById('letterTitle').value = '';
-  document.getElementById('letterBody').value = '';
-  renderLetters();
+
+  if (!title || !body) {
+
+    alert('¡Escribe un título y el contenido de la carta! 💛');
+
+    return;
+  }
+
+  try {
+
+    const response = await fetch('/api/letters', {
+
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify({
+        title,
+        content: body
+      })
+
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+
+    document.getElementById('letterTitle').value = '';
+
+    document.getElementById('letterBody').value = '';
+
+    loadLetters();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert('Error guardando carta 😭');
+  }
 }
+
+
+async function loadLetters() {
+
+  try {
+
+    const response = await fetch('/api/letters');
+
+    const letters = await response.json();
+
+    const list = document.getElementById('lettersList');
+
+    list.innerHTML = '';
+
+    if (letters.length === 0) {
+
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">✉️</div>
+          <p>Aún no hay cartas. ¡Escribe la primera!</p>
+        </div>
+      `;
+
+      return;
+    }
+
+    letters.forEach((l) => {
+
+      const card = document.createElement('div');
+
+      card.className = 'letter-card';
+
+      card.innerHTML = `
+        <div class="letter-card-header">
+
+          <h3>💌 ${escHtml(l.title)}</h3>
+
+          <div style="display:flex;align-items:center;gap:10px;">
+
+            <span class="date">
+              ${new Date(l.created_at).toLocaleDateString('es-MX')}
+            </span>
+
+          </div>
+
+        </div>
+
+        <p>${escHtml(l.content)}</p>
+      `;
+
+      list.appendChild(card);
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+  }
+}
+
+
+function escHtml(t) {
+
+  return t
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+
+loadLetters();
 
 function deleteLetter(idx) {
   if (confirm('¿Eliminar esta carta?')) {
