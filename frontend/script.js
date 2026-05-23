@@ -23,46 +23,6 @@ function showSection(id) {
 
 // ====== CLOUDINARY PHOTOS ======
 
-async function uploadPhotos(files) {
-
-    for (const file of files) {
-
-        const reader = new FileReader();
-
-        reader.onload = async function(e) {
-
-            try {
-
-                await fetch('/api/photos', {
-
-                    method: 'POST',
-
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-
-                    body: JSON.stringify({
-                        image: e.target.result
-                    })
-
-                });
-
-                loadPhotos();
-
-            } catch (error) {
-
-                console.error(error);
-
-                alert('Error subiendo foto 😭');
-            }
-
-        };
-
-        reader.readAsDataURL(file);
-    }
-}
-
-
 async function loadPhotos() {
 
     try {
@@ -95,6 +55,12 @@ async function loadPhotos() {
 
             card.innerHTML = `
                 <img src="${photo.secure_url}" alt="Recuerdo">
+
+                <button
+                    class="delete-photo-btn"
+                    onclick="deletePhoto('${photo.public_id}')">
+                    ✖
+                </button>
             `;
 
             gallery.appendChild(card);
@@ -104,6 +70,34 @@ async function loadPhotos() {
     } catch (error) {
 
         console.error(error);
+    }
+}
+
+async function deletePhoto(publicId) {
+
+    try {
+
+        await fetch('/api/photos', {
+
+            method: 'DELETE',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                public_id: publicId
+            })
+
+        });
+
+        loadPhotos();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert('Error borrando foto 😭');
     }
 }
 

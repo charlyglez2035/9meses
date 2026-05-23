@@ -388,6 +388,39 @@
 
   .letter-card .del-letter:hover { color: #ff4444; }
 
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+.delete-photo-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    width: 35px;
+    height: 35px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(0,0,0,0.6);
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    transition: 0.2s;
+}
+
+.delete-photo-btn:hover {
+    transform: scale(1.1);
+    background: #ff4d88;
+}
+
   /* GAME SECTION */
   #game-section {
     max-width: 100%;

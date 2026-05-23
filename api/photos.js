@@ -10,19 +10,19 @@ export default async function handler(req, res) {
 
     try {
 
-        // GET
+        // ===== GET =====
         if (req.method === "GET") {
 
             const result = await cloudinary.search
                 .expression('folder:9meses')
-                .sort_by('created_at','desc')
+                .sort_by('created_at', 'desc')
                 .max_results(100)
                 .execute();
 
             return res.status(200).json(result.resources);
         }
 
-        // POST
+        // ===== POST =====
         if (req.method === "POST") {
 
             const { image } = req.body;
@@ -32,6 +32,25 @@ export default async function handler(req, res) {
             });
 
             return res.status(200).json(upload);
+        }
+
+        // ===== DELETE =====
+        if (req.method === "DELETE") {
+
+            const { public_id } = req.body;
+
+            if (!public_id) {
+
+                return res.status(400).json({
+                    error: "Missing public_id"
+                });
+            }
+
+            await cloudinary.uploader.destroy(public_id);
+
+            return res.status(200).json({
+                success: true
+            });
         }
 
         return res.status(405).json({
