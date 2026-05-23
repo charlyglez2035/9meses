@@ -148,8 +148,6 @@ dz.addEventListener('drop', e => {
 
 loadPhotos();
 
-
-
 // ====== GRU vs MINIONS GAME ======
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -687,3 +685,98 @@ window.addEventListener('load', () => {
     }
   }, { once: true });
 });
+
+// ====== LETTERS ======
+let lettersData = [];
+
+async function loadLetters() {
+  try {
+    const res = await fetch('/api/letters');
+    lettersData = await res.json();
+
+    console.log(lettersData);
+
+    renderLetters();
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function saveLetter() {
+
+  const title = document.getElementById('letterTitle').value.trim();
+  const body = document.getElementById('letterBody').value;
+
+  if (!title || !body.trim()) {
+    alert('¡Escribe un título y el contenido de la carta! 💛');
+    return;
+  }
+
+  try {
+
+    await fetch('/api/letters', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: title,
+        content: body
+      })
+    });
+
+    document.getElementById('letterTitle').value = '';
+    document.getElementById('letterBody').value = '';
+
+    loadLetters();
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function renderLetters() {
+
+  const list = document.getElementById('lettersList');
+
+  if (!list) return;
+
+  list.innerHTML = '';
+
+  if (lettersData.length === 0) {
+
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">✉️</div>
+        <p>Aún no hay cartas. ¡Escribe la primera!</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  lettersData.forEach((letter) => {
+
+    const div = document.createElement('div');
+
+    div.className = 'letter-card';
+
+    div.innerHTML = `
+      <h3>${letter.title}</h3>
+
+      <small>
+        ${new Date(letter.created_at).toLocaleDateString('es-MX')}
+      </small>
+
+      <p style="white-space: pre-wrap;">
+        ${letter.content}
+      </p>
+    `;
+
+    list.appendChild(div);
+
+  });
+}
+
+loadLetters();
