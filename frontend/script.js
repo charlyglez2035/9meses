@@ -22,6 +22,72 @@ function showSection(id) {
 }
 
 // ====== CLOUDINARY PHOTOS ======
+async function uploadPhotos(files) {
+
+    for (const file of files) {
+
+        const reader = new FileReader();
+
+        reader.onload = async function(e) {
+
+            try {
+
+                await fetch('/api/photos', {
+
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        image: e.target.result
+                    })
+
+                });
+
+                loadPhotos();
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert('Error subiendo foto 😭');
+            }
+
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+async function deletePhoto(publicId) {
+
+    try {
+
+        await fetch('/api/photos', {
+
+            method: 'DELETE',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                public_id: publicId
+            })
+
+        });
+
+        loadPhotos();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert('Error borrando foto 😭');
+    }
+}
 
 async function loadPhotos() {
 
@@ -73,42 +139,12 @@ async function loadPhotos() {
     }
 }
 
-async function deletePhoto(publicId) {
-
-    try {
-
-        await fetch('/api/photos', {
-
-            method: 'DELETE',
-
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify({
-                public_id: publicId
-            })
-
-        });
-
-        loadPhotos();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert('Error borrando foto 😭');
-    }
-}
-
-
 document.getElementById('fileInput')
 .addEventListener('change', (e) => {
 
     uploadPhotos(e.target.files);
 
 });
-
 
 const dz = document.getElementById('dropZone');
 
@@ -138,7 +174,6 @@ dz.addEventListener('drop', e => {
     uploadPhotos(files);
 
 });
-
 
 loadPhotos();
 
